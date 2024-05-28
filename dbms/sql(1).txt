@@ -1,0 +1,149 @@
+sql
+
+1 no ques
+a.
+SELECT DISTINCT d.customer_name
+FROM Depositor d
+WHERE d.customer_name NOT IN (
+    SELECT b.customer_name
+    FROM Borrower b
+);
+
+b.
+DELETE FROM Loan
+WHERE amount BETWEEN 10000 AND 25000;
+
+c.
+SELECT DISTINCT b.customer_name
+FROM Borrower b
+JOIN Loan l ON b.loan_number = l.loan_number
+WHERE l.branch_name = 'Perryridge';
+
+d.
+DELETE FROM Loan
+WHERE amount BETWEEN 0 AND 500;
+
+
+
+
+
+
+2 no ques
+a.
+SELECT company_name
+FROM Works
+GROUP BY company_name
+HAVING COUNT(employee_id) = (
+    SELECT MAX(employee_count)
+    FROM (
+        SELECT COUNT(employee_id) AS employee_count
+        FROM Works
+        GROUP BY company_name
+    ) AS counts
+);
+
+b.
+SELECT company_name, AVG(salary) AS average_salary
+FROM Works
+GROUP BY company_name;
+
+c.
+SELECT e.employee_name
+FROM Employee e
+JOIN Works w ON e.employee_id = w.employee_id
+JOIN Company c ON w.company_name = c.company_name
+WHERE e.city = 'Barisal' AND c.city <> 'Barisal';
+
+d.
+SELECT e.employee_name
+FROM Employee e
+JOIN Works w ON e.employee_id = w.employee_id
+WHERE w.company_name = 'First Bank Corporation';
+
+
+
+
+
+3 no ques
+
+a.
+SELECT DISTINCT c.customer_name
+FROM Customer c
+WHERE EXISTS (
+    SELECT 1
+    FROM Borrower b
+    JOIN Depositor d ON b.customer_name = d.customer_name
+    WHERE c.customer_name = b.customer_name
+);
+
+b.
+SELECT branch_name, AVG(balance) AS average_balance
+FROM Account
+GROUP BY branch_name;
+
+c.
+UPDATE Account a
+SET balance = 
+    CASE 
+        WHEN EXISTS (SELECT 1 FROM Borrower b JOIN Depositor d ON b.customer_name = d.customer_name WHERE d.account_number = a.account_number) 
+             THEN balance * 0.97 
+        ELSE balance * 0.95 
+    END;
+
+
+
+
+4 no ques
+a.
+SELECT e.employee_name, e.city, w.salary
+FROM Employee e
+JOIN Works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'IFIC Bank Ltd';
+
+b.
+SELECT company_name, SUM(salary) AS total_salary
+FROM Works
+GROUP BY company_name;
+
+c.
+UPDATE Works
+SET salary = salary * 1.20
+WHERE company_name = 'First Bank Corporation';
+
+d.
+SELECT e.employee_name
+FROM Employee e
+WHERE e.employee_name NOT IN (
+    SELECT w.employee_name
+    FROM Works w
+    WHERE w.company_name = 'First Bank Corporation'
+);
+
+
+
+
+5 no ques
+a.
+INSERT INTO Accident (report_number, date, location) VALUES
+('AR 2200', '2024-05-27', 'Dhaka');
+
+b.
+DELETE FROM Car
+WHERE license = (SELECT c.license
+                 FROM Car c
+                 JOIN Owns o ON c.license = o.license
+                 JOIN Person p ON o.driver_id = p.driver_id
+                 WHERE p.name = 'Simanto' AND c.model = 'Toyota');
+
+c.
+SELECT COUNT(DISTINCT o.driver_id) AS total_people
+FROM Owns o
+JOIN Participate p ON o.license = p.license
+JOIN Accident a ON p.report_number = a.report_number
+WHERE YEAR(a.date) = 2020;
+
+d.
+UPDATE Participate
+SET damage_amount = 30000.00
+WHERE license = 'DHAKA 4000' AND report_number = 'AR 2197';
+

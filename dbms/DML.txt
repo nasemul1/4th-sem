@@ -1,0 +1,249 @@
+bank database dml
+
+
+-- Insert data into Branch table
+INSERT INTO Branch (branch_name, branch_city, assets) VALUES
+('Downtown', 'New York', 1000000.00),
+('Uptown', 'New York', 2000000.00),
+('Perryridge', 'Perrytown', 1500000.00),
+('Mianus', 'Mianus', 500000.00);
+
+-- Insert data into Customer table
+INSERT INTO Customer (customer_name, customer_street, customer_city) VALUES
+('John Doe', '123 Elm St', 'New York'),
+('Jane Smith', '456 Oak St', 'New York'),
+('Alice Johnson', '789 Pine St', 'Perrytown'),
+('Bob Brown', '101 Maple St', 'Mianus'),
+('Charlie Davis', '202 Birch St', 'Perrytown');
+
+-- Insert data into Loan table
+INSERT INTO Loan (loan_number, branch_name, amount) VALUES
+('L001', 'Downtown', 5000.00),
+('L002', 'Uptown', 15000.00),
+('L003', 'Perryridge', 25000.00),
+('L004', 'Mianus', 30000.00),
+('L005', 'Perryridge', 500.00);
+
+-- Insert data into Borrower table
+INSERT INTO Borrower (customer_name, loan_number) VALUES
+('John Doe', 'L001'),
+('Jane Smith', 'L002'),
+('Alice Johnson', 'L003'),
+('Charlie Davis', 'L005');
+
+-- Insert data into Account table
+INSERT INTO Account (account_number, branch_name, balance) VALUES
+('A001', 'Downtown', 10000.00),
+('A002', 'Uptown', 20000.00),
+('A003', 'Perryridge', 15000.00),
+('A004', 'Mianus', 5000.00),
+('A005', 'Perryridge', 25000.00);
+
+-- Insert data into Depositor table
+INSERT INTO Depositor (customer_name, account_number) VALUES
+('John Doe', 'A001'),
+('Jane Smith', 'A002'),
+('Alice Johnson', 'A003'),
+('Bob Brown', 'A004'),
+('Charlie Davis', 'A005');
+
+
+
+
+
+-- Insert data into Branch table
+INSERT INTO Branch (branch_name, branch_city, assets) VALUES
+('Westside', 'Los Angeles', 1800000.00),
+('Northend', 'Chicago', 2200000.00),
+('Midtown', 'Houston', 1500000.00),
+('Eastend', 'New York', 2000000.00);
+
+-- Insert data into Customer table
+INSERT INTO Customer (customer_name, customer_street, customer_city) VALUES
+('Michael Johnson', '123 Maple St', 'Chicago'),
+('Emily Davis', '456 Oak St', 'Los Angeles'),
+('Matthew Smith', '789 Pine St', 'New York'),
+('Sophia Brown', '101 Elm St', 'Houston'),
+('David Wilson', '202 Cedar St', 'Chicago');
+
+-- Insert data into Loan table
+INSERT INTO Loan (loan_number, branch_name, amount) VALUES
+('L101', 'Westside', 8000.00),
+('L102', 'Northend', 15000.00),
+('L103', 'Midtown', 20000.00),
+('L104', 'Eastend', 30000.00),
+('L105', 'Midtown', 10000.00);
+
+-- Insert data into Borrower table
+INSERT INTO Borrower (customer_name, loan_number) VALUES
+('Michael Johnson', 'L101'),
+('Emily Davis', 'L102'),
+('Matthew Smith', 'L103'),
+('Sophia Brown', 'L104'),
+('David Wilson', 'L105');
+
+-- Insert data into Account table
+INSERT INTO Account (account_number, branch_name, balance) VALUES
+('ACC101', 'Westside', 12000.00),
+('ACC102', 'Northend', 22000.00),
+('ACC103', 'Midtown', 17000.00),
+('ACC104', 'Eastend', 8000.00),
+('ACC105', 'Midtown', 25000.00);
+
+-- Insert data into Depositor table
+INSERT INTO Depositor (customer_name, account_number) VALUES
+('Michael Johnson', 'ACC101'),
+('Emily Davis', 'ACC102'),
+('Matthew Smith', 'ACC103'),
+('Sophia Brown', 'ACC104'),
+('David Wilson', 'ACC105');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+company database DML
+
+
+
+
+-- Insert data into Employee table
+INSERT INTO Employee (employee_id, employee_name, street, city) VALUES
+(1, 'John Doe', '123 Elm St', 'Barisal'),
+(2, 'Jane Smith', '456 Oak St', 'Barisal'),
+(3, 'Alice Johnson', '789 Pine St', 'Dhaka'),
+(4, 'Bob Brown', '101 Maple St', 'Chittagong'),
+(5, 'Charlie Davis', '202 Birch St', 'Sylhet');
+
+-- Insert data into Company table
+INSERT INTO Company (company_name, city) VALUES
+('First Bank Corporation', 'Dhaka'),
+('Tech Solutions', 'Chittagong'),
+('Green Energy', 'Sylhet'),
+('Global Trading', 'Barisal');
+
+-- Insert data into Works table
+INSERT INTO Works (employee_id, company_name, salary) VALUES
+(1, 'First Bank Corporation', 50000),
+(2, 'Tech Solutions', 60000),
+(3, 'Green Energy', 55000),
+(4, 'Global Trading', 62000),
+(5, 'First Bank Corporation', 58000),
+(1, 'Global Trading', 50000);  -- This is to create a scenario where an employee works at multiple companies
+
+-- Insert data into Manager table
+INSERT INTO Manager (employee_id, manager_name) VALUES
+(1, 'Michael Scott'),
+(2, 'Dwight Schrute'),
+(3, 'Jim Halpert'),
+(4, 'Pam Beesly'),
+(5, 'Stanley Hudson');
+
+
+
+
+
+
+
+
+
+
+emplyee Database DML
+
+
+
+
+-- Insert data into Employee table
+INSERT INTO Employee (employee_name, street, city) VALUES
+('John Doe', '123 Elm St', 'Barisal'),
+('Jane Smith', '456 Oak St', 'Barisal'),
+('Alice Johnson', '789 Pine St', 'Dhaka'),
+('Bob Brown', '101 Maple St', 'Chittagong'),
+('Charlie Davis', '202 Birch St', 'Sylhet');
+
+-- Insert data into Company table
+INSERT INTO Company (company_name, city) VALUES
+('IFIC Bank Ltd', 'Dhaka'),
+('First Bank Corporation', 'Dhaka'),
+('Tech Solutions', 'Chittagong'),
+('Green Energy', 'Sylhet'),
+('Global Trading', 'Barisal');
+
+-- Insert data into Works table
+INSERT INTO Works (employee_name, company_name, salary) VALUES
+('John Doe', 'IFIC Bank Ltd', 50000),
+('Jane Smith', 'Tech Solutions', 60000),
+('Alice Johnson', 'Green Energy', 55000),
+('Bob Brown', 'Global Trading', 62000),
+('Charlie Davis', 'First Bank Corporation', 58000),
+('John Doe', 'First Bank Corporation', 55000);
+
+-- Insert data into Manages table
+INSERT INTO Manages (employee_name, manages_name) VALUES
+('John Doe', 'Jane Smith'),
+('Jane Smith', 'Alice Johnson'),
+('Alice Johnson', 'Bob Brown'),
+('Bob Brown', 'Charlie Davis');
+
+
+
+
+
+
+
+
+
+
+car_insurance Database DML
+
+
+
+-- Insert data into Person table
+INSERT INTO Person (driver_id, name, address) VALUES
+(1, 'Simanto', '123 Elm St'),
+(2, 'Alice', '456 Oak St'),
+(3, 'Bob', '789 Pine St');
+
+-- Insert data into Car table
+INSERT INTO Car (license, model, year) VALUES
+('DHAKA 4000', 'Toyota', 2019),
+('DHAKA 4001', 'Honda', 2020),
+('DHAKA 4002', 'Ford', 2018);
+
+-- Insert data into Accident table
+INSERT INTO Accident (report_number, date, location) VALUES
+('AR 2197', '2023-05-20', 'Dhaka'),
+('AR 2198', '2020-03-15', 'Chittagong'),
+('AR 2199', '2020-07-22', 'Sylhet');
+
+-- Insert data into Owns table
+INSERT INTO Owns (driver_id, license) VALUES
+(1, 'DHAKA 4000'),
+(2, 'DHAKA 4001'),
+(3, 'DHAKA 4002');
+
+-- Insert data into Participate table
+INSERT INTO Participate (driver_id, license, report_number, damage_amount) VALUES
+(1, 'DHAKA 4000', 'AR 2197', 25000.00),
+(2, 'DHAKA 4001', 'AR 2198', 15000.00),
+(3, 'DHAKA 4002', 'AR 2199', 20000.00);
+
+
+
+
+
+
+
+
+

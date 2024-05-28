@@ -1,0 +1,187 @@
+1 no
+
+CREATE TABLE Branch (
+    branch_name VARCHAR(100) PRIMARY KEY,
+    branch_city VARCHAR(100),
+    assets DECIMAL(15, 2)
+);
+
+
+CREATE TABLE Customer (
+    customer_name VARCHAR(100) PRIMARY KEY,
+    customer_street VARCHAR(100),
+    customer_city VARCHAR(100)
+);
+
+
+CREATE TABLE Loan (
+    loan_number VARCHAR(20) PRIMARY KEY,
+    branch_name VARCHAR(100),
+    amount DECIMAL(15, 2),
+    FOREIGN KEY (branch_name) REFERENCES Branch(branch_name)
+);
+
+
+CREATE TABLE Borrower (
+    customer_name VARCHAR(100),
+    loan_number VARCHAR(20),
+    PRIMARY KEY (customer_name, loan_number),
+    FOREIGN KEY (customer_name) REFERENCES Customer(customer_name),
+    FOREIGN KEY (loan_number) REFERENCES Loan(loan_number)
+);
+
+
+CREATE TABLE Account (
+    account_number VARCHAR(20) PRIMARY KEY,
+    branch_name VARCHAR(100),
+    balance DECIMAL(15, 2),
+    FOREIGN KEY (branch_name) REFERENCES Branch(branch_name)
+);
+
+
+CREATE TABLE Depositor (
+    customer_name VARCHAR(100),
+    account_number VARCHAR(20),
+    PRIMARY KEY (customer_name, account_number),
+    FOREIGN KEY (customer_name) REFERENCES Customer(customer_name),
+    FOREIGN KEY (account_number) REFERENCES Account(account_number)
+);
+
+
+
+
+
+
+
+2 no
+
+
+CREATE TABLE Employee (
+    employee_id INT PRIMARY KEY,
+    employee_name VARCHAR(100),
+    street VARCHAR(100),
+    city VARCHAR(50)
+);
+
+
+CREATE TABLE Works (
+    employee_id INT,
+    company_name VARCHAR(100),
+    salary DECIMAL(10, 2),
+    PRIMARY KEY (employee_id, company_name),
+    FOREIGN KEY (employee_id) REFERENCES Employee(employee_id),
+    FOREIGN KEY (company_name) REFERENCES Company(company_name)
+);
+
+
+CREATE TABLE Company (
+    company_name VARCHAR(100) PRIMARY KEY,
+    city VARCHAR(50)
+);
+
+
+CREATE TABLE Manager (
+    employee_id INT,
+    manager_name VARCHAR(100),
+    PRIMARY KEY (employee_id),
+    FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
+);
+
+
+
+
+
+
+
+
+3 no 
+follow 1 no 
+
+
+
+4 no
+
+CREATE TABLE Employee (
+    employee_name VARCHAR(100) PRIMARY KEY,
+    street VARCHAR(100),
+    city VARCHAR(50)
+);
+
+
+CREATE TABLE Company (
+    company_name VARCHAR(100) PRIMARY KEY,
+    city VARCHAR(50)
+);
+
+
+CREATE TABLE Works (
+    employee_name VARCHAR(100),
+    company_name VARCHAR(100),
+    salary DECIMAL(10, 2),
+    PRIMARY KEY (employee_name, company_name),
+    FOREIGN KEY (employee_name) REFERENCES Employee(employee_name),
+    FOREIGN KEY (company_name) REFERENCES Company(company_name)
+);
+
+
+CREATE TABLE Manages (
+    employee_name VARCHAR(100),
+    manages_name VARCHAR(100),
+    PRIMARY KEY (employee_name, manages_name),
+    FOREIGN KEY (employee_name) REFERENCES Employee(employee_name),
+    FOREIGN KEY (manages_name) REFERENCES Employee(employee_name)
+);
+
+
+
+
+
+
+
+
+
+
+5 no
+
+
+CREATE TABLE Person (
+    driver_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    address VARCHAR(255)
+);
+
+
+CREATE TABLE Car (
+    license VARCHAR(20) PRIMARY KEY,
+    model VARCHAR(100),
+    year INT
+);
+
+
+CREATE TABLE Accident (
+    report_number VARCHAR(20) PRIMARY KEY,
+    date DATE,
+    location VARCHAR(255)
+);
+
+
+CREATE TABLE Owns (
+    driver_id INT,
+    license VARCHAR(20),
+    PRIMARY KEY (driver_id, license),
+    FOREIGN KEY (driver_id) REFERENCES Person(driver_id),
+    FOREIGN KEY (license) REFERENCES Car(license)
+);
+
+
+CREATE TABLE Participate (
+    driver_id INT,
+    license VARCHAR(20),
+    report_number VARCHAR(20),
+    damage_amount DECIMAL(10, 2),
+    PRIMARY KEY (driver_id, license, report_number),
+    FOREIGN KEY (driver_id) REFERENCES Person(driver_id),
+    FOREIGN KEY (license) REFERENCES Car(license),
+    FOREIGN KEY (report_number) REFERENCES Accident(report_number)
+);
+
