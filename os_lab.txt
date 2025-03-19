@@ -1,0 +1,643 @@
+N.B.: Answer any two of the following problems)
+
+1. Write a C program to simulate the CPU scheduling algorithm - Round Robin.
+2. Write a C program to implement Longest Job First (LJF) algorithm.
+3. Write a C program to simulate the following contiguous meinory allocation:
+    a) Worst Fit
+    b) Best Fit
+    c) First Fit
+4. Write a C program to implement Longest Remaining Time First (LRTF) algorithm.
+5. Write a C program to simulate the concept of the Dining Philosophers problem.
+7. Write a C program to simulate all file location strategics:
+    a) Sequential
+    b) Indexed
+    c) Linked
+9. Write a C program to simulate the CPU scheduling algorithm - First Come First Serve.
+10. Write a C program for Banker's algorithm for deadlock avoidance.
+
+
+
+Code -
+------
+
+1. RR -
+-------
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct P {
+    int id, at, bt, rt, ct, tat, wt;
+};
+
+int main() {
+    int n, q;
+    printf("Processes & Time Quantum: ");
+    scanf("%d %d", &n, &q);
+
+    struct P p[n];
+    for (int i = 0; i < n; i++) {
+        p[i].id = i + 1;
+        printf("P%d Arrival Time & Burst Time: ", i + 1);
+        scanf("%d %d", &p[i].at, &p[i].bt);
+        p[i].rt = p[i].bt;
+    }
+
+    int t = 0, c = 0;
+    int executed = 0;
+
+    while (c < n) {
+        executed = 0;
+        for (int i = 0; i < n; i++) {
+            if (p[i].rt > 0 && p[i].at <= t) {
+                int et = (p[i].rt > q) ? q : p[i].rt;
+                t += et;
+                p[i].rt -= et;
+                executed = 1; // A process executed
+
+                if (p[i].rt == 0) {
+                    c++;
+                    p[i].ct = t;
+                    p[i].tat = p[i].ct - p[i].at;
+                    p[i].wt = p[i].tat - p[i].bt;
+                }
+            }
+        }
+
+        if (!executed) {
+            int min_at = __INT_MAX__;
+            for (int i = 0; i < n; i++) {
+                if (p[i].rt > 0) {
+                    min_at = (p[i].at < min_at) ? p[i].at : min_at;
+                }
+            }
+            t = (t < min_at) ? min_at : t;
+        }
+    }
+
+    printf("\nID\tAT\tBT\tCT\tTAT\tWT\n");
+    for (int i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n",
+               p[i].id, p[i].at, p[i].bt, p[i].ct, p[i].tat, p[i].wt);
+    }
+    float avg_tat = 0, avg_wt = 0;
+    for (int i = 0; i < n; i++) {
+        avg_tat += p[i].tat;
+        avg_wt += p[i].wt;
+    }
+    printf("\nAvg TAT: %.2f\nAvg WT: %.2f\n", avg_tat / n, avg_wt / n);
+
+    return 0;
+}
+
+------------------------------x----------------------------------------
+
+2. LJF -
+--------
+
+#include <stdio.h>
+
+struct P {
+    int id, at, bt, ct, tat, wt;
+};
+
+int main() {
+    int n;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    struct P p[n];
+    for (int i = 0; i < n; i++) {
+        p[i].id = i + 1;
+        printf("P%d Arrival Time & Burst Time: ", i + 1);
+        scanf("%d %d", &p[i].at, &p[i].bt);
+    }
+
+    // Sorting processes by arrival time
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (p[j].at > p[j + 1].at) {
+                struct P temp = p[j];
+                p[j] = p[j + 1];
+                p[j + 1] = temp;
+            }
+        }
+    }
+
+    int time = 0, completed = 0;
+    int isCompleted[n];
+
+    for (int i = 0; i < n; i++)
+        isCompleted[i] = 0;
+
+    while (completed < n) {
+        int lj = -1, max_bt = -1;
+
+        for (int j = 0; j < n; j++) {
+            if (p[j].at <= time && !isCompleted[j] && p[j].bt > max_bt) {
+                max_bt = p[j].bt;
+                lj = j;
+            }
+        }
+
+        if (lj == -1) {
+            time++;
+            continue;
+        }
+
+        time += p[lj].bt;
+        p[lj].ct = time;
+        p[lj].tat = p[lj].ct - p[lj].at;
+        p[lj].wt = p[lj].tat - p[lj].bt;
+
+        isCompleted[lj] = 1;
+        completed++;
+    }
+
+    // Output the results
+    printf("\nID\tAT\tBT\tCT\tTAT\tWT\n");
+    for (int i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n",
+               p[i].id, p[i].at, p[i].bt, p[i].ct, p[i].tat, p[i].wt);
+    }
+
+    // Calculate and print averages
+    float avg_tat = 0, avg_wt = 0;
+    for (int i = 0; i < n; i++) {
+        avg_tat += p[i].tat;
+        avg_wt += p[i].wt;
+    }
+    printf("\nAvg TAT: %.2f\nAvg WT: %.2f\n", avg_tat / n, avg_wt / n);
+
+    return 0;
+}
+
+----------------------------------------------------------------------
+
+3. mem_aloc -
+-------------
+
+#include <stdio.h>
+
+int main() {
+    int n, m;
+    printf("Blocks & Processes: ");
+    scanf("%d %d", &n, &m);
+
+    int bs[n], ps[m], orig_bs[n];
+
+    printf("Block Sizes: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &bs[i]);
+        orig_bs[i] = bs[i];  // Store original block sizes
+    }
+
+    printf("Process Sizes: ");
+    for (int i = 0; i < m; i++) {
+        scanf("%d", &ps[i]);
+    }
+
+    for (int algo = 0; algo < 3; algo++) {
+        int alloc[m];  // Stores block allocation for each process
+        for (int i = 0; i < m; i++) alloc[i] = -1; // Initialize as not allocated
+
+        for (int i = 0; i < m; i++) {
+            int best_block = -1;
+            int best_size = (algo == 0) ? 0 : 99999;  // Fix worst fit initialization
+
+            for (int j = 0; j < n; j++) {
+                if (bs[j] >= ps[i]) {  // Block can accommodate process
+                    if (algo == 0 && bs[j] > best_size) {  // Worst Fit
+                        best_size = bs[j];
+                        best_block = j;
+                    } else if (algo == 1 && bs[j] < best_size) {  // Best Fit
+                        best_size = bs[j];
+                        best_block = j;
+                    } else if (algo == 2 && best_block == -1) {  // First Fit
+                        best_block = j;
+                        break;  // Stop after first match
+                    }
+                }
+            }
+
+            if (best_block != -1) {  // If a suitable block is found
+                alloc[i] = best_block;
+                bs[best_block] -= ps[i];  // Reduce available size
+            }
+        }
+
+        printf("\n%s Fit Allocation:\n", (algo == 0) ? "Worst" : (algo == 1) ? "Best" : "First");
+        printf("Process\tSize\tBlock Allocated\n");
+
+        for (int i = 0; i < m; i++) {
+            printf("P%-3d\t%-3d\t", i + 1, ps[i]);
+            if (alloc[i] != -1)
+                printf("B%-3d\n", alloc[i] + 1);
+            else
+                printf("Not Allocated\n");
+        }
+
+        // Restore block sizes for next algorithm
+        for (int i = 0; i < n; i++) bs[i] = orig_bs[i];
+    }
+
+    return 0;
+}
+
+--------------------------------------------------------------------------------------------------
+
+4. LRTF -
+---------
+
+#include <stdio.h>
+
+struct Process {
+    int id, at, bt, rt, ct, tat, wt;
+};
+
+int main() {
+    int n;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    struct Process p[n];
+    int completed = 0, time = 0, max_index = 0;
+
+    // Input process details
+    for (int i = 0; i < n; i++) {
+        p[i].id = i + 1;
+        printf("Enter Arrival Time and Burst Time for Process P%d: ", p[i].id);
+        scanf("%d %d", &p[i].at, &p[i].bt);
+        p[i].rt = p[i].bt;  // Remaining time initially equals burst time
+    }
+
+    // Sorting processes by arrival time
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (p[j].at > p[j + 1].at) {
+                struct Process temp = p[j];
+                p[j] = p[j + 1];
+                p[j + 1] = temp;
+            }
+        }
+    }
+
+    // Scheduling Process using LRTF
+    while (completed < n) {
+        max_index = -1;
+        int max_remaining_time = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (p[i].at <= time && p[i].rt > 0) { // Check if process has arrived and not completed
+                if (p[i].rt > max_remaining_time) {
+                    max_remaining_time = p[i].rt;
+                    max_index = i;
+                }
+            }
+        }
+
+        if (max_index == -1) {  // No process is ready
+            time++;
+            continue;
+        }
+
+        // Execute the process for 1 unit of time
+        p[max_index].rt--;
+        time++;
+
+        // If process is completed
+        if (p[max_index].rt == 0) {
+            completed++;
+            p[max_index].ct = time;
+            p[max_index].tat = p[max_index].ct - p[max_index].at;
+            p[max_index].wt = p[max_index].tat - p[max_index].bt;
+        }
+    }
+
+    // Display results
+    printf("\nID\tAT\tBT\tCT\tTAT\tWT\n");
+    float total_tat = 0, total_wt = 0;
+    for (int i = 0; i < n; i++) {
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n", p[i].id, p[i].at, p[i].bt, p[i].ct, p[i].tat, p[i].wt);
+        total_tat += p[i].tat;
+        total_wt += p[i].wt;
+    }
+
+    // Print average TAT and WT
+    printf("\nAverage Turnaround Time: %.2f\n", total_tat / n);
+    printf("Average Waiting Time: %.2f\n", total_wt / n);
+
+    return 0;
+}
+
+---------------------------------------------------------------------------------------------------
+
+5. dinning -
+------------
+
+The Dining Philosophers Problem is a classic synchronization problem in computer science that demonstrates the challenges of resource sharing. It involves five philosophers sitting around a circular table, alternating between thinking and eating. They share five forks, and each philosopher needs two forks to eat.
+
+#include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+
+#define NUM_PHILOSOPHERS 5
+
+pthread_mutex_t forks[NUM_PHILOSOPHERS];  // Mutex locks for forks
+pthread_t philosophers[NUM_PHILOSOPHERS]; // Threads for philosophers
+
+void* philosopher(void* num) {
+    int id = *(int*)num;
+    int left_fork = id;
+    int right_fork = (id + 1) % NUM_PHILOSOPHERS;
+
+    while (1) {
+        // Thinking
+        printf("Philosopher %d is thinking...\n", id);
+        sleep(1);
+
+        // Picking up forks (lock both forks)
+        printf("Philosopher %d is hungry and trying to pick up forks %d and %d...\n", id, left_fork, right_fork);
+
+        // Lock forks in a safe order to prevent deadlock
+        if (id % 2 == 0) { // Even philosophers pick left fork first
+            pthread_mutex_lock(&forks[left_fork]);
+            pthread_mutex_lock(&forks[right_fork]);
+        } else { // Odd philosophers pick right fork first
+            pthread_mutex_lock(&forks[right_fork]);
+            pthread_mutex_lock(&forks[left_fork]);
+        }
+
+        // Eating
+        printf("Philosopher %d is eating...\n", id);
+        sleep(2);
+
+        // Put down forks (unlock both forks)
+        pthread_mutex_unlock(&forks[left_fork]);
+        pthread_mutex_unlock(&forks[right_fork]);
+
+        printf("Philosopher %d has finished eating and put down forks %d and %d...\n", id, left_fork, right_fork);
+    }
+
+    return NULL;
+}
+
+int main() {
+    int ids[NUM_PHILOSOPHERS];
+
+    // Initialize mutex locks for forks
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        pthread_mutex_init(&forks[i], NULL);
+    }
+
+    // Create philosopher threads
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        ids[i] = i;
+        pthread_create(&philosophers[i], NULL, philosopher, &ids[i]);
+    }
+
+    // Join threads (though they run infinitely)
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        pthread_join(philosophers[i], NULL);
+    }
+
+    // Destroy mutexes (unreachable due to infinite loop)
+    for (int i = 0; i < NUM_PHILOSOPHERS; i++) {
+        pthread_mutex_destroy(&forks[i]);
+    }
+
+    return 0;
+}
+
+----------------------------------------------------------------------
+
+7. file -
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_BLOCKS 100
+
+// File structure
+struct File {
+    int start; // Start block (for Sequential Allocation)
+    int size;
+    int blocks[MAX_BLOCKS]; // Block allocation details
+};
+
+// Function for Sequential Allocation
+void sequentialAllocation(struct File *f) {
+    printf("\nSequential Allocation:\n");
+    printf("File starts at block %d and occupies %d blocks.\n", f->start, f->size);
+    printf("Allocated Blocks: ");
+    for (int i = 0; i < f->size; i++)
+        printf("%d ", f->start + i);
+    printf("\n");
+}
+
+// Function for Indexed Allocation
+void indexedAllocation(struct File *f) {
+    printf("\nIndexed Allocation:\n");
+    printf("Index Block: %d\n", f->start);
+    printf("Allocated Blocks: ");
+    for (int i = 0; i < f->size; i++)
+        printf("%d ", f->blocks[i]);
+    printf("\n");
+}
+
+// Function for Linked Allocation
+void linkedAllocation(struct File *f) {
+    printf("\nLinked Allocation:\n");
+    printf("File starts at block %d\n", f->start);
+    printf("Allocated Blocks (in order): ");
+    for (int i = 0; i < f->size; i++)
+        printf("%d -> ", f->blocks[i]);
+    printf("NULL\n");
+}
+
+int main() {
+    struct File f;
+    int choice;
+
+    printf("Enter file size (in blocks): ");
+    scanf("%d", &f.size);
+
+    printf("Enter starting block: ");
+    scanf("%d", &f.start);
+
+    // Randomly assign blocks for Indexed and Linked Allocation
+    printf("Enter %d block numbers:\n", f.size);
+    for (int i = 0; i < f.size; i++)
+        scanf("%d", &f.blocks[i]);
+
+    while (1) {
+        printf("\nChoose File Allocation Method:\n");
+        printf("1. Sequential\n2. Indexed\n3. Linked\n4. Exit\n");
+        printf("Choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                sequentialAllocation(&f);
+                break;
+            case 2:
+                indexedAllocation(&f);
+                break;
+            case 3:
+                linkedAllocation(&f);
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice! Try again.\n");
+        }
+    }
+    return 0;
+}
+
+------------------------------------------------------------------
+
+9. fcfs -
+---------
+
+FCFS stands for First-Come, First-Served. It's a type of scheduling algorithm used in operating systems for managing processes.
+
+In FCFS, the process that arrives first is the one that gets executed first. This scheduling method is simple and easy to implement. However, it can lead to inefficiencies, especially if a short process arrives after a long process, as the short process must wait for the long one to finish. This is known as the convoy effect.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Process { int pid, at, bt, ct, tat, wt; };
+
+int main() {
+
+    int n;
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+    struct Process p[n];
+    for (int i = 0; i < n; i++) {
+        p[i].pid = i + 1;
+        printf("P%d Arrival & Burst Time: ", i + 1);
+        scanf("%d %d", &p[i].at, &p[i].bt);
+    }
+
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (p[j].at > p[j + 1].at) {
+                struct Process temp = p[j]; p[j] = p[j + 1]; p[j + 1] = temp;
+            }
+
+    int time = 0;
+    for (int i = 0; i < n; i++) {
+    time = (time < p[i].at) ? p[i].at : time;
+        p[i].ct = time + p[i].bt;
+        p[i].tat = p[i].ct - p[i].at;
+        p[i].wt = p[i].tat - p[i].bt;
+        time = p[i].ct;
+    }
+
+    printf("\nID\tAT\tBT\tCT\tTAT\tWT\n");
+    for (int i = 0; i < n; i++)
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n", p[i].pid, p[i].at, p[i].bt, p[i].ct, p[i].tat, p[i].wt);
+    float avg_tat = 0, avg_wt = 0;
+
+    for (int i = 0; i < n; i++) {
+        avg_tat += p[i].tat; avg_wt += p[i].wt;
+    }
+
+    printf("\nAvg TAT: %.2f\nAvg WT: %.2f\n", avg_tat / n, avg_wt / n);
+
+    return 0;
+}
+
+
+------------------------------------------------------------------------------
+
+10. banker -
+------------
+
+#include <stdio.h>
+
+int main() {
+    int n, m;
+
+    printf("Enter number of Processes & Resources: ");
+    scanf("%d %d", &n, &m);
+
+    int avail[m], max[n][m], alloc[n][m], need[n][m];
+
+    printf("Enter Available Resources: ");
+    for (int j = 0; j < m; j++) {
+        scanf("%d", &avail[j]);
+    }
+
+    printf("Enter Maximum Resource Matrix:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &max[i][j]);
+        }
+    }
+
+    printf("Enter Allocation Matrix:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &alloc[i][j]);
+            need[i][j] = max[i][j] - alloc[i][j]; // Calculate Need matrix
+        }
+    }
+
+    int finish[n]; // Track finished processes
+    int safe[n];   // Store safe sequence
+    int count = 0; // Count of completed processes
+
+    // Initialize finish array to 0 (unfinished)
+    for (int i = 0; i < n; i++) {
+        finish[i] = 0;
+    }
+
+    // Start checking for the safe sequence
+    while (count < n) {
+        int found = 0; // Flag to check if a process is found that can finish
+        for (int i = 0; i < n; i++) {
+            if (finish[i] == 0) { // Process hasn't finished yet
+                int can_finish = 1;
+                // Check if all resources needed by the process are available
+                for (int j = 0; j < m; j++) {
+                    if (need[i][j] > avail[j]) {
+                        can_finish = 0;
+                        break;
+                    }
+                }
+
+                // If process can finish, update available resources and mark it as finished
+                if (can_finish) {
+                    for (int j = 0; j < m; j++) {
+                        avail[j] += alloc[i][j]; // Release allocated resources
+                    }
+                    finish[i] = 1; // Mark process as finished
+                    safe[count++] = i; // Add process to safe sequence
+                    found = 1;
+                    break;
+                }
+            }
+        }
+
+        // If no process can be finished, the system is in an unsafe state
+        if (!found) {
+            printf("Unsafe state!\n");
+            return 0; // Exit with unsafe state
+        }
+    }
+
+    // Print the safe sequence
+    printf("Safe Sequence: ");
+    for (int i = 0; i < n; i++) {
+        printf("P%d ", safe[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
